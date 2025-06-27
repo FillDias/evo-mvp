@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:evo_mvp/models/evento.dart';
 import 'package:evo_mvp/pages/detalhes_evento_page.dart';
+import 'package:evo_mvp/models/dica.dart';
 
 class EventosPage extends StatefulWidget {
   const EventosPage({super.key});
@@ -32,6 +33,23 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
       longitude: -46.658186,
       imagemUrl: 'https://i.imgur.com/j1q2VKm.jpeg',
       categoria: 'Música',
+    ),
+  ];
+
+  final List<Dica> dicas = [
+    Dica(
+      titulo: 'Hamburgueria do Zé',
+      descricao: 'Promoção de 2x1 nos smash burgers todo sábado.',
+      imagemUrl: 'https://i.imgur.com/kWp2EMJ.jpeg',
+      categoria: 'Gastronomia',
+      local: 'Praia do Canto',
+    ),
+    Dica(
+      titulo: 'Festival de Comida Japonesa',
+      descricao: 'Degustação à vontade por R\$ 69,90.',
+      imagemUrl: 'https://i.imgur.com/QfjTgJ4.jpeg',
+      categoria: 'Festival',
+      local: 'Shopping Vitória',
     ),
   ];
 
@@ -82,7 +100,7 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
         controller: _tabController,
         children: [
           _buildCarrosselDestaques(context),
-          const Center(child: Text('Dicas', style: TextStyle(color: Colors.white))),
+          _buildAbaDicas(),
           _buildFiltroEventos(),
         ],
       ),
@@ -167,6 +185,55 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAbaDicas() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: dicas.length,
+      itemBuilder: (context, index) {
+        final dica = dicas[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          color: const Color(0xFF1F1F2E),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                dica.imagemUrl,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+              ),
+            ),
+            title: Text(
+              dica.titulo,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 6),
+                Text(
+                  '${dica.categoria} • ${dica.local}',
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  dica.descricao,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white60, fontSize: 13),
+                ),
+              ],
+            ),
+            trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
+          ),
+        );
+      },
     );
   }
 
