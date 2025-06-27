@@ -5,6 +5,7 @@ class Evento {
   final double latitude;
   final double longitude;
   final String imagemUrl;
+  final String categoria;
 
   const Evento({
     required this.titulo,
@@ -13,5 +14,8 @@ class Evento {
     required this.latitude,
     required this.longitude,
     required this.imagemUrl,
+    required this.categoria,
   });
 }
+
+
