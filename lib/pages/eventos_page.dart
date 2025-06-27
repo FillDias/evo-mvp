@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:evo_mvp/models/evento.dart';
 import 'package:evo_mvp/pages/detalhes_evento_page.dart';
 import 'package:evo_mvp/models/dica.dart';
+import 'package:evo_mvp/pages/dica_detalhes_page.dart'; // ✅ NOVO IMPORT
 
 class EventosPage extends StatefulWidget {
   const EventosPage({super.key});
@@ -36,7 +37,7 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
     ),
   ];
 
-  final List<Dica> dicas = [
+  final List<Dica> dicas = [ // ✅ LISTA ALTERADA
     Dica(
       titulo: 'Hamburgueria do Zé',
       descricao: 'Promoção de 2x1 nos smash burgers todo sábado.',
@@ -45,16 +46,15 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
       local: 'Praia do Canto',
     ),
     Dica(
-      titulo: 'Festival de Comida Japonesa',
-      descricao: 'Degustação à vontade por R\$ 69,90.',
-      imagemUrl: 'https://i.imgur.com/QfjTgJ4.jpeg',
-      categoria: 'Festival',
-      local: 'Shopping Vitória',
+      titulo: 'Alcides',
+      descricao: 'Lanchonete temática anos 90 com empanadas e burgers irreverentes.',
+      imagemUrl: 'https://i.imgur.com/aOUjYn1.jpeg',
+      categoria: 'Gastronomia',
+      local: 'Praia da Costa',
     ),
   ];
 
   List<Evento> eventosFiltrados = List.from(todosEventos);
-
   final List<String> categorias = ['Todos', 'Esporte', 'Música'];
 
   @override
@@ -100,7 +100,7 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
         controller: _tabController,
         children: [
           _buildCarrosselDestaques(context),
-          _buildAbaDicas(),
+          _buildAbaDicas(), // ✅ ATUALIZADO
           _buildFiltroEventos(),
         ],
       ),
@@ -230,7 +230,22 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
                 ),
               ],
             ),
-            trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+            onTap: () {
+              if (dica.titulo == 'Alcides') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DicaDetalhesPage()),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Página ainda não disponível'),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              }
+            },
           ),
         );
       },
