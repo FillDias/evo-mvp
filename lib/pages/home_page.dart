@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart'hide LinearGradient;
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,63 +6,79 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1E),
+      backgroundColor: const Color(0xFFD1AE1E), // Fundo dourado
       body: Stack(
         children: [
-          // Fundo animado com Rive
-          const RiveAnimation.asset(
-            'assets/animations/fundo.riv',
-            fit: BoxFit.cover,
+          // Imagem de ondas com opacidade
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset(
+                'assets/images/ondas.png',
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
 
-          // Conteúdo principal sobre o fundo animado
+          // Conteúdo principal
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'EVO',
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  // Logo PNG
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: 160,
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Descubra eventos na Grande Vitória com uma experiência divertida e visual!',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
 
-                  // Botão animado para explorar
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/eventos');
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF00FFE0), Color(0xFF0076FF)],
+                  // Título "EVO"
+                  const Text(
+                    '',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0F2A5A), // Azul escuro elegante
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Texto descritivo
+                  const Text(
+                    'Seus eventos favoritos em apenas um lugar, com dicas exclusivas e cupons de até 20% para aproveitar o seu role.',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w300, // ExtraLight
+                      color: Colors.white, // ou Color(0xFFFAFAFA) para um branco suave
+                    ),
+                  ),
+                  const Spacer(),
+
+                  // Botão "Fique por dentro"
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/eventos');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF208DFF), // azul vibrante
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                      ),
-                      child: const Text(
-                        'Fique Por Dentro',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+                        textStyle: const TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      child: const Text('Fique por dentro'),
                     ),
                   ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

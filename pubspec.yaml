@@ -31,6 +31,8 @@ flutter:
 
   assets:
     - assets/animations/fundo.riv
+    - assets/images/ondas.png
+    - assets/images/logo.png
 
 
 

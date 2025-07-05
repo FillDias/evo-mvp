@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:evo_mvp/models/evento.dart';
 import 'package:evo_mvp/pages/detalhes_evento_page.dart';
 import 'package:evo_mvp/models/dica.dart';
-import 'package:evo_mvp/pages/dica_detalhes_page.dart'; // ✅ NOVO IMPORT
+import 'package:evo_mvp/pages/dica_detalhes_page.dart';
 
 class EventosPage extends StatefulWidget {
   const EventosPage({super.key});
@@ -37,7 +37,7 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
     ),
   ];
 
-  final List<Dica> dicas = [ // ✅ LISTA ALTERADA
+  final List<Dica> dicas = [
     Dica(
       titulo: 'Hamburgueria do Zé',
       descricao: 'Promoção de 2x1 nos smash burgers todo sábado.',
@@ -82,25 +82,44 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFFD1AE1E),
       appBar: AppBar(
-        title: const Text('Evo', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF1F1F2E),
+        backgroundColor: const Color(0xFFD1AE1E),
+        elevation: 0,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/logo.png',
+              height: 36,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'EVO',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0F2A5A),
+              ),
+            ),
+          ],
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFF0F2A5A)),
         bottom: TabBar(
           controller: _tabController,
+          labelColor: Color(0xFF0F2A5A),
+          unselectedLabelColor: Colors.black45,
+          indicatorColor: Color(0xFF0F2A5A),
           tabs: const [
             Tab(text: 'Em Destaque'),
             Tab(text: 'Dicas'),
             Tab(text: 'Filtros'),
           ],
-          indicatorColor: Colors.white,
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
           _buildCarrosselDestaques(context),
-          _buildAbaDicas(), // ✅ ATUALIZADO
+          _buildAbaDicas(),
           _buildFiltroEventos(),
         ],
       ),
@@ -109,10 +128,22 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
 
   Widget _buildCarrosselDestaques(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Principais eventos',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F2A5A),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
         SizedBox(
-          height: 240,
+          height: 280,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: todosEventos.length,
@@ -127,63 +158,245 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
                   );
                 },
                 child: Container(
-                  width: 300,
+                  width: 280,
                   margin: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
+                    color: Color(0xFFC8A618),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
-                      BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
                     ],
+                    border: Border.all(color: Colors.white),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Stack(
-                      alignment: Alignment.bottomLeft,
-                      children: [
-                        Image.network(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                        child: Image.network(
                           evento.imagemUrl,
-                          height: 240,
-                          width: 300,
+                          height: 150,
+                          width: double.infinity,
                           fit: BoxFit.cover,
                         ),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.black.withOpacity(0.85), Colors.transparent],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              evento.titulo,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0F2A5A),
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                evento.categoria == 'Esporte'
-                                    ? Icons.sports_soccer
-                                    : Icons.music_note,
-                                color: Colors.white,
+                            const SizedBox(height: 4),
+                            Text(
+                              evento.descricao,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                evento.titulo,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  evento.categoria == 'Esporte'
+                                      ? Icons.sports_soccer
+                                      : Icons.music_note,
+                                  size: 16,
+                                  color: Colors.grey,
                                 ),
-                              ),
-                            ],
-                          ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  evento.horario,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );
             },
           ),
         ),
+
+        const SizedBox(height: 32),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'O que tem para hoje',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F2A5A),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: todosEventos.length,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemBuilder: (context, index) {
+              final evento = todosEventos[index];
+              return Container(
+                width: 220,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  color: Color(0xFFC8A618),
+                  borderRadius: BorderRadius.circular(12),  // border: Border.all(color: Colors.white),
+                  border: Border.all(color: Colors.white),   // borda card branca
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      child: Image.network(
+                        evento.imagemUrl,
+                        height: 100,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        evento.titulo,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0F2A5A),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 32),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Eventos do momento',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F2A5A),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...todosEventos.map((evento) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetalhesEventoPage(evento: evento)),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFC8A618),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
+                    child: Image.network(
+                      evento.imagemUrl,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            evento.titulo,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0F2A5A),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            evento.descricao,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            evento.horario,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.black45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -197,7 +410,7 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          color: const Color(0xFF1F1F2E),
+          color: Color(0xFFC8A618),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
             leading: ClipRRect(
@@ -211,7 +424,10 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
             ),
             title: Text(
               dica.titulo,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Color(0xFF0F2A5A),
+                fontWeight: FontWeight.bold,
+              ),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,18 +435,18 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
                 const SizedBox(height: 6),
                 Text(
                   '${dica.categoria} • ${dica.local}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Colors.black54, fontSize: 12),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   dica.descricao,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white60, fontSize: 13),
+                  style: const TextStyle(color: Colors.black45, fontSize: 13),
                 ),
               ],
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFF0F2A5A)),
             onTap: () {
               if (dica.titulo == 'Alcides') {
                 Navigator.push(
@@ -253,66 +469,6 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
   }
 
   Widget _buildFiltroEventos() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: TextField(
-            controller: _searchController,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: 'Buscar evento...',
-              hintStyle: const TextStyle(color: Colors.white54),
-              filled: true,
-              fillColor: const Color(0xFF1F1F2E),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              prefixIcon: const Icon(Icons.search, color: Colors.white),
-            ),
-            onChanged: _filtrarEventos,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: DropdownButton<String>(
-            value: _categoriaSelecionada,
-            dropdownColor: const Color(0xFF1F1F2E),
-            iconEnabledColor: Colors.white,
-            style: const TextStyle(color: Colors.white),
-            items: categorias.map((cat) {
-              return DropdownMenuItem(
-                value: cat,
-                child: Text(cat),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                _filtrarPorCategoria(value);
-              }
-            },
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: eventosFiltrados.length,
-            itemBuilder: (context, index) {
-              final evento = eventosFiltrados[index];
-              return ListTile(
-                title: Text(evento.titulo, style: const TextStyle(color: Colors.white)),
-                subtitle: Text(evento.horario, style: const TextStyle(color: Colors.white70)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DetalhesEventoPage(evento: evento)),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
+    return Container();
   }
 }
