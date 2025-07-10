@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:evo_mvp/models/evento.dart';
 import 'package:evo_mvp/pages/detalhes_evento_page.dart';
 import 'package:evo_mvp/models/dica.dart';
@@ -16,26 +18,9 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
   final TextEditingController _searchController = TextEditingController();
   String _categoriaSelecionada = 'Todos';
 
-  static final List<Evento> todosEventos = [
-    Evento(
-      titulo: 'Vitoria x Desportiva',
-      descricao: 'Arena do Jacaré / Copa Capixaba',
-      horario: '08 de Julho',
-      latitude: -23.55052,
-      longitude: -46.633308,
-      imagemUrl: 'https://i.imgur.com/d3XkRq4.png',
-      categoria: 'Esporte',
-    ),
-    Evento(
-      titulo: 'Histona',
-      descricao: 'Show do Mestre Kiko',
-      horario: '20:00',
-      latitude: -23.559616,
-      longitude: -46.658186,
-      imagemUrl: 'https://i.imgur.com/j1q2VKm.jpeg',
-      categoria: 'Música',
-    ),
-  ];
+  List<Evento> todosEventos = [];
+  List<Evento> eventosFiltrados = [];
+  bool isLoading = true;
 
   final List<Dica> dicas = [
     Dica(
@@ -54,13 +39,29 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
     ),
   ];
 
-  List<Evento> eventosFiltrados = List.from(todosEventos);
   final List<String> categorias = ['Todos', 'Esporte', 'Música'];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _carregarEventos();
+  }
+
+  Future<void> _carregarEventos() async {
+    final response = await http.get(Uri.parse('http://192.168.137.224:8080/eventos'));
+
+    if (response.statusCode == 200) {
+      print("🟢 Dados recebidos: ${response.body}"); // 👈 Adicione esta linha!
+      final List<dynamic> dados = json.decode(response.body);
+      setState(() {
+        todosEventos = dados.map((e) => Evento.fromJson(e)).toList();
+        eventosFiltrados = List.from(todosEventos);
+        isLoading = false;
+      });
+    } else {
+      print('Erro ao carregar eventos: ${response.statusCode}');
+    }
   }
 
   void _filtrarEventos(String filtro) {
@@ -127,277 +128,58 @@ class _EventosPageState extends State<EventosPage> with TickerProviderStateMixin
   }
 
   Widget _buildCarrosselDestaques(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Principais eventos',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0F2A5A),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 280,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: todosEventos.length,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemBuilder: (context, index) {
-              final evento = todosEventos[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DetalhesEventoPage(evento: evento)),
-                  );
-                },
-                child: Container(
-                  width: 280,
-                  margin: const EdgeInsets.only(right: 16),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFC8A618),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                        child: Image.network(
-                          evento.imagemUrl,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              evento.titulo,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF0F2A5A),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              evento.descricao,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Icon(
-                                  evento.categoria == 'Esporte'
-                                      ? Icons.sports_soccer
-                                      : Icons.music_note,
-                                  size: 16,
-                                  color: Colors.grey,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  evento.horario,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.black45,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-        const SizedBox(height: 32),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'O que tem para hoje',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0F2A5A),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: todosEventos.length,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemBuilder: (context, index) {
-              final evento = todosEventos[index];
-              return Container(
-                width: 220,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  color: Color(0xFFC8A618),
-                  borderRadius: BorderRadius.circular(12),  // border: Border.all(color: Colors.white),
-                  border: Border.all(color: Colors.white),   // borda card branca
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
-                      ),
-                      child: Image.network(
-                        evento.imagemUrl,
-                        height: 100,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        evento.titulo,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0F2A5A),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
+    if (eventosFiltrados.isEmpty) {
+      return const Center(child: Text("Nenhum evento encontrado."));
+    }
 
-        const SizedBox(height: 32),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Eventos do momento',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0F2A5A),
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: eventosFiltrados.length,
+      itemBuilder: (context, index) {
+        final evento = eventosFiltrados[index];
+
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          color: Colors.white,
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                evento.imagemUrl,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...todosEventos.map((evento) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: GestureDetector(
+            title: Text(
+              evento.titulo,
+              style: const TextStyle(
+                color: Color(0xFF0F2A5A),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Text(
+              evento.descricao,
+              style: const TextStyle(color: Colors.black54),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFF0F2A5A)),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DetalhesEventoPage(evento: evento)),
+                MaterialPageRoute(
+                  builder: (context) => DetalhesEventoPage(evento: evento),
+                ),
               );
             },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFC8A618),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      bottomLeft: Radius.circular(12),
-                    ),
-                    child: Image.network(
-                      evento.imagemUrl,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            evento.titulo,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0F2A5A),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            evento.descricao,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            evento.horario,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.black45,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
-        )),
-        const SizedBox(height: 20),
-      ],
+        );
+      },
     );
   }
 

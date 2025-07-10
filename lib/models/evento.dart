@@ -1,25 +1,40 @@
 class Evento {
+  final int? id;
   final String titulo;
   final String descricao;
   final String horario;
-  final double latitude;
-  final double longitude;
   final String imagemUrl;
   final String categoria;
-  final String? linkIngresso; // link para compra de ingresso
-  final String? atracoes;     // atrações do evento
+  final double latitude;
+  final double longitude;
+  // final String? linkIngresso;
+  // final String? atracoes;
 
-  const Evento({
+  Evento({
+    this.id,
     required this.titulo,
     required this.descricao,
     required this.horario,
-    required this.latitude,
-    required this.longitude,
     required this.imagemUrl,
     required this.categoria,
-    this.linkIngresso,
-    this.atracoes,
+    required this.latitude,
+    required this.longitude,
+    // this.linkIngresso,
+    // this.atracoes,
   });
+
+  factory Evento.fromJson(Map<String, dynamic> json) {
+    return Evento(
+      id: json['id'],
+      titulo: json['titulo'],
+      descricao: json['descricao'],
+      horario: json['horario'],
+      imagemUrl: json['imagemUrl'],
+      categoria: json['categoria'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      // linkIngresso: json['linkIngresso'],
+      // atracoes: json['atracoes'],
+    );
+  }
 }
-
-

@@ -16,10 +16,10 @@ dependencies:
   google_maps_flutter: ^2.2.5
   google_fonts: ^6.2.1
   animated_text_kit: ^4.2.2
-
+  http: 1.4.0
 
   cupertino_icons: ^1.0.8
-  rive: ^0.12.3  # <-- Adicionamos aqui o pacote do Rive
+  rive: ^0.13.20  # <-- Adicionamos aqui o pacote do Rive
 
 dev_dependencies:
   flutter_test:

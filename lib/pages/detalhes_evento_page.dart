@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:evo_mvp/models/evento.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart'; // Comentado por enquanto
 
 class DetalhesEventoPage extends StatefulWidget {
   final Evento evento;
@@ -12,18 +12,18 @@ class DetalhesEventoPage extends StatefulWidget {
 }
 
 class _DetalhesEventoPageState extends State<DetalhesEventoPage> {
-  double _avaliacao = 4; // Avaliação padrão
+  double _avaliacao = 4;
 
-  void _abrirLinkIngresso() async {
-    final url = Uri.parse(widget.evento.linkIngresso ?? '');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível abrir o link')),
-      );
-    }
-  }
+  // void _abrirLinkIngresso() async {
+  //   final url = Uri.parse(widget.evento.linkIngresso ?? '');
+  //   if (await canLaunchUrl(url)) {
+  //     await launchUrl(url);
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Não foi possível abrir o link')),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class _DetalhesEventoPageState extends State<DetalhesEventoPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Imagem do evento
+          // Imagem
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
@@ -58,7 +58,7 @@ class _DetalhesEventoPageState extends State<DetalhesEventoPage> {
           ),
           const SizedBox(height: 12),
 
-          // Informações adicionais
+          // Informações
           Text(
             '🕒 Horário: ${evento.horario}',
             style: const TextStyle(color: Colors.white70),
@@ -69,29 +69,29 @@ class _DetalhesEventoPageState extends State<DetalhesEventoPage> {
             style: const TextStyle(color: Colors.white70),
           ),
           const SizedBox(height: 6),
-          Text(
-            '🎉 Atrações: ${evento.atracoes ?? "Informações em breve"}',
-            style: const TextStyle(color: Colors.white70),
+          const Text(
+            '🎉 Atrações: Informações em breve',
+            style: TextStyle(color: Colors.white70),
           ),
           const SizedBox(height: 20),
 
-          // Botão para ingresso
-          ElevatedButton.icon(
-            onPressed: evento.linkIngresso != null ? _abrirLinkIngresso : null,
-            icon: const Icon(Icons.confirmation_num),
-            label: const Text('Comprar Ingresso'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
+          // Botão (desativado por enquanto)
+          // ElevatedButton.icon(
+          //   onPressed: null,
+          //   icon: const Icon(Icons.confirmation_num),
+          //   label: const Text('Comprar Ingresso'),
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor: Colors.blueAccent,
+          //     foregroundColor: Colors.white,
+          //     padding: const EdgeInsets.symmetric(vertical: 14),
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(12),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 20),
 
-          // Avaliação com estrelas
+          // Avaliação
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -116,7 +116,7 @@ class _DetalhesEventoPageState extends State<DetalhesEventoPage> {
           ),
           const SizedBox(height: 20),
 
-          // Mapa estilizado
+          // Mapa
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: SizedBox(
